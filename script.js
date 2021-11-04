@@ -5,11 +5,21 @@ let minValue = getValue('Минимальное знание числа для �
 let maxValue = getValue('Максимальное знание числа для игры', defaultMaxValue)
 function getValue(message, Value) {
     let UserValue = prompt(message, Value)
+    UserValue = +UserValue;
+    if (isNaN(UserValue)) {
+        console.log(UserValue + ' не число');
+        UserValue = Value 
+    } else {
+        console.log("num");
+    }
+    if (UserValue >= 1000){UserValue = 999}
+    if (UserValue <= -1000){UserValue = -999}
     return UserValue
 }
-// let minValue = parseInt(prompt('Минимальное знание числа для игры','-1000'));
-// let maxValue = parseInt(prompt('Максимальное знание числа для игры','1000'));
+
 alert(`Загадайте любое целое число от ${minValue} до ${maxValue}, а я его угадаю`);
+// minValue=100
+// maxValue=200
 let answerNumber  = Math.floor((minValue + maxValue) / 2);
 let orderNumber = 1;
 let gameRun = true;
@@ -18,7 +28,8 @@ const orderNumberField = document.getElementById('orderNumberField');
 const answerField = document.getElementById('answerField');
 
 orderNumberField.innerText = orderNumber;
-answerField.innerText = `Вы загадали число ${answerNumber }?`;
+let answerNumberText = numberToWord(answerNumber)
+answerField.innerText = `Вы загадали число ${answerNumberText }?`;
 
 document.getElementById('btnRetry').addEventListener('click', function () {
     minValue = -1000;
@@ -41,7 +52,7 @@ document.getElementById('btnOver').addEventListener('click', function () {
             answerNumber  = Math.floor((minValue + maxValue) / 2);
             orderNumber++;
             orderNumberField.innerText = orderNumber;
-            showQuestion()
+            showQuestion(answerNumber)
             // const questions = [`ОНО ${answerNumber }?`, `НЕ ${answerNumber }?`, `Даладно ${answerNumber }?` ] 
             // var item = questions[Math.floor(Math.random()*questions.length)];
             // answerField.innerText = item;
@@ -64,7 +75,7 @@ document.getElementById('btnLess').addEventListener('click', function () {
             answerNumber  = Math.floor((minValue + maxValue) / 2);
             orderNumber++;
             orderNumberField.innerText = orderNumber;
-            showQuestion()
+            showQuestion(answerNumber)
             // const questions = [`ОНО ${answerNumber }?`, `НЕ ${answerNumber }?`, `Даладно ${answerNumber }?` ] 
             // var item = questions[Math.floor(Math.random()*questions.length)];
             // answerField.innerText = item;
@@ -74,7 +85,8 @@ document.getElementById('btnLess').addEventListener('click', function () {
 
 document.getElementById('btnEqual').addEventListener('click', function () {
     if (gameRun){
-        const answers = [`Да это легко! Ты загадал... ${answerNumber }`, `Наверное, это число...${answerNumber }`, `Вот ОНО ${answerNumber }` ] 
+        let answerNumberText = numberToWord(answerNumber)
+        const answers = [`Да это легко! Ты загадал... ${answerNumberText }`, `Наверное, это число...${answerNumberText }`, `Вот ОНО ${answerNumberText }` ] 
         var item = answers[Math.floor(Math.random()*answers.length)];
         answerField.innerText = item
         gameRun = false;
@@ -87,9 +99,92 @@ document.getElementById('btnRetry').addEventListener('click',  function refreshP
     }
 } )
 
-function showQuestion() {
-    const questions = [`ОНО ${answerNumber }?`, `НЕ ${answerNumber }?`, `Даладно ${answerNumber }?` ] 
+function showQuestion(answerNumber) {
+    let answerNumberText = numberToWord(answerNumber)
+    const questions = [`ОНО ${answerNumberText}?`, `НЕ ${answerNumberText }?`, `Даладно ${answerNumberText}?` ] 
             var item = questions[Math.floor(Math.random()*questions.length)];
             answerField.innerText = item;
     
 }
+
+function numberToWord(number) {
+    const words20 = {
+        0: "",
+        1: "один",
+        2: "два",
+        3: "три",
+        4: "четыре",
+        5: "пять",
+        6: "шесть",
+        7: "семь",
+        8: "восомь",
+        9: "девять",
+        10: "десять",
+        11: "одинадцат",
+        12: "двенадцать",
+        13: "тринадцать",
+        14: "четырнадцать",
+        15: "пятнадцать",
+        16: "шетнадцать",
+        17: "семнадцать",
+        18: "восемнадцат",
+        19: "девятнадцать"
+        
+    }
+    const words100 = {
+        0: "",
+        2: "двадцать",
+        3: "традцать",
+        4: "сорок",
+        5: "пятьдесят",
+        6: "шетьдесят",
+        7: "семдесят",
+        8: "восемьдесят",
+        9: "девяноста"
+    }
+    const words1000 = {
+        1:"сто",
+        2:"двести",
+        3:"триста",
+        4:"четыресто",
+        5:"пятьсот",
+        6:"шестьсот",
+        7:"семьсот",
+        8:"восемьсот",
+        9:"девятсот"
+    }
+    let numberText = ""
+
+    let minuse = ""
+    if (Math.sign(number) == -1){
+        minuse = "минус "
+    }
+    numberText += minuse
+    number = Math.abs(number)
+    if (number == 0){
+        numberText += "ноль"
+    }
+    if (number > 0 && number <=19){
+        numberText += words20[number]
+    }
+    if (number >= 20 && number <=99){
+        // numberText = words100[number]
+        var digits = number.toString().split('');
+        var realDigits = digits.map(Number)
+        // console.log(realDigits);
+        numberText += words100[realDigits[0]] + " " + words20[realDigits[1]]
+    }
+    if (number >= 100 && number <=999){
+        // numberText = words100[number]
+        var digits = number.toString().split('');
+        var realDigits = digits.map(Number)
+        // console.log(realDigits);
+        numberText += words1000[realDigits[0]] + " " + words100[realDigits[1]] + " " +  words20[realDigits[2]]
+    }
+    console.log(numberText);
+    return numberText
+  }
+  numberToWord(0)
+  numberToWord(-7)
+  numberToWord(346)
+  numberToWord(101)
